@@ -310,11 +310,15 @@ function initProgressDots() {
     sections.forEach(s => observer.observe(s));
 }
 
-// ============ REAL-TIME AQI (WAQI API) ============
+// ============ REAL-TIME AQI (IQAir API — Primary) ============
+const IQAIR_KEY = '5214e39e-290c-4407-b83d-17397b3d9648';
+const PHAYAO_LAT = 19.20;
+const PHAYAO_LON = 99.89;
+
 function animateAQI() {
     fetchPhayaoAQI();
-    // Refresh every 30 seconds (station data updates ~hourly, but poll frequently for freshest data)
-    setInterval(fetchPhayaoAQI, 30 * 1000);
+    // Refresh every 5 minutes (IQAir free plan: 10,000 calls/month ≈ 1 call/5 min)
+    setInterval(fetchPhayaoAQI, 5 * 60 * 1000);
 }
 
 async function fetchPhayaoAQI() {
@@ -322,25 +326,23 @@ async function fetchPhayaoAQI() {
     const badge = document.getElementById('aqiBadge');
     if (!el) return;
 
-    // === Source 1: Air4Thai (กรมควบคุมมลพิษ — official) ===
+    // === Source 1: IQAir (HTTPS — works on GitHub Pages) ===
     try {
-        const res = await fetch('http://air4thai.pcd.go.th/services/getNewAQI_JSON.php');
+        const url = `https://api.airvisual.com/v2/nearest_city?lat=${PHAYAO_LAT}&lon=${PHAYAO_LON}&key=${IQAIR_KEY}`;
+        const res = await fetch(url);
         const json = await res.json();
-        if (json.stations) {
-            // Station 70t = สนามกีฬาจังหวัดพะเยา (ต.บ้านต๋อม อ.เมือง, พะเยา)
-            const station = json.stations.find(s => s.stationID === '70t');
-            if (station && station.AQILast && station.AQILast.AQI) {
-                const aqi = parseInt(station.AQILast.AQI.aqi);
-                const pm25val = station.AQILast.PM25 ? parseFloat(station.AQILast.PM25.value) : null;
-                const timeStr = `${station.AQILast.date} ${station.AQILast.time}`;
-                const stationName = station.nameTH || 'สนามกีฬาจังหวัดพะเยา';
-                if (aqi > 0) {
-                    updateAQIDisplay(el, badge, aqi, pm25val, timeStr, stationName, 'Air4Thai (กรมควบคุมมลพิษ)');
-                    return;
-                }
-            }
+        if (json.status === 'success' && json.data) {
+            const d = json.data;
+            const aqi = d.current.pollution.aqius; // US AQI
+            const pm25 = d.current.pollution.mainus === 'p2' ? null : null; // IQAir doesn't always give raw PM2.5
+            const ts = d.current.pollution.ts;
+            const timeStr = ts ? new Date(ts).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' }) : null;
+            const city = d.city || 'พะเยา';
+            const state = d.state || '';
+            updateAQIDisplay(el, badge, aqi, pm25, timeStr, `${city}, ${state}`, 'IQAir');
+            return;
         }
-    } catch (e) { console.log('Air4Thai failed, trying WAQI...'); }
+    } catch (e) { console.log('IQAir failed, trying WAQI...', e); }
 
     // === Source 2: WAQI (aqicn.org — fallback) ===
     try {
@@ -350,7 +352,7 @@ async function fetchPhayaoAQI() {
             const aqi = json.data.aqi;
             const pm25 = json.data.iaqi && json.data.iaqi.pm25 ? json.data.iaqi.pm25.v : null;
             const timeStr = json.data.time ? json.data.time.s : null;
-            updateAQIDisplay(el, badge, aqi, pm25, timeStr, 'Phayao (WAQI)', 'aqicn.org');
+            updateAQIDisplay(el, badge, aqi, pm25, timeStr, 'Phayao', 'WAQI (aqicn.org)');
             return;
         }
     } catch (e) { /* fallback below */ }
