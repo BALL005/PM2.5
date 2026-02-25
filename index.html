@@ -116,14 +116,15 @@
                 </div>
             </div>
             <!-- Size comparison -->
-            <div class="size-visual anim-scale" style="--d:0.5s">
-                <div class="sv-item">
+            <div class="size-visual anim-scale"
+                style="--d:0.5s; display:flex; align-items:center; justify-content:center; gap:40px; flex-wrap:wrap">
+                <div class="sv-item" style="display:flex; flex-direction:column; align-items:center; gap:8px">
                     <div class="sv-circle" style="--s:100px"></div><span>เส้นผม 70μm</span>
                 </div>
-                <div class="sv-item">
+                <div class="sv-item" style="display:flex; flex-direction:column; align-items:center; gap:8px">
                     <div class="sv-circle" style="--s:42px"></div><span>PM10</span>
                 </div>
-                <div class="sv-item">
+                <div class="sv-item" style="display:flex; flex-direction:column; align-items:center; gap:8px">
                     <div class="sv-circle glow" style="--s:12px"></div><span>PM2.5</span>
                 </div>
             </div>
@@ -212,6 +213,7 @@
             <!-- Year + Charts -->
             <div class="chart-area anim-fade" style="--d:0.4s">
                 <div class="year-pills">
+                    <button class="yr-pill" data-year="2565">2565</button>
                     <button class="yr-pill" data-year="2566">2566</button>
                     <button class="yr-pill" data-year="2567">2567</button>
                     <button class="yr-pill" data-year="2568">2568</button>
