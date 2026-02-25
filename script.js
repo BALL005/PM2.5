@@ -310,23 +310,94 @@ function initProgressDots() {
     sections.forEach(s => observer.observe(s));
 }
 
-// ============ AQI ANIMATION ============
+// ============ REAL-TIME AQI (WAQI API) ============
 function animateAQI() {
+    fetchPhayaoAQI();
+    // Refresh every 30 seconds (station data updates ~hourly, but poll frequently for freshest data)
+    setInterval(fetchPhayaoAQI, 30 * 1000);
+}
+
+async function fetchPhayaoAQI() {
     const el = document.getElementById('aqiNumber');
+    const badge = document.getElementById('aqiBadge');
     if (!el) return;
-    const values = [142, 156, 148, 163, 155, 170, 145, 158];
-    let idx = 0;
-    setInterval(() => {
-        idx = (idx + 1) % values.length;
-        el.style.transform = 'scale(0.7)';
-        el.style.opacity = '0.2';
-        setTimeout(() => {
-            el.textContent = values[idx];
-            el.style.transform = 'scale(1.15)';
-            el.style.opacity = '1';
-            setTimeout(() => { el.style.transform = 'scale(1)'; }, 250);
-        }, 200);
-    }, 3500);
+
+    try {
+        // WAQI free API — search for Phayao station
+        const res = await fetch('https://api.waqi.info/feed/phayao/?token=demo');
+        const json = await res.json();
+        if (json.status === 'ok' && json.data && json.data.aqi) {
+            const aqi = json.data.aqi;
+            const pm25 = json.data.iaqi && json.data.iaqi.pm25 ? json.data.iaqi.pm25.v : null;
+            updateAQIDisplay(el, badge, aqi, pm25, json.data.time ? json.data.time.s : null);
+            return;
+        }
+    } catch (e) { /* fallback below */ }
+
+    // Fallback: try search API
+    try {
+        const res2 = await fetch('https://api.waqi.info/search/?keyword=phayao&token=demo');
+        const json2 = await res2.json();
+        if (json2.status === 'ok' && json2.data && json2.data.length > 0) {
+            const aqi = json2.data[0].aqi;
+            updateAQIDisplay(el, badge, aqi, null, null);
+            return;
+        }
+    } catch (e) { /* fallback below */ }
+
+    // Final fallback: show estimated
+    updateAQIDisplay(el, badge, '--', null, null);
+}
+
+function updateAQIDisplay(el, badge, aqi, pm25, timeStr) {
+    // Animate number change
+    el.style.transform = 'scale(0.7)';
+    el.style.opacity = '0.2';
+    setTimeout(() => {
+        el.textContent = aqi;
+        el.style.transform = 'scale(1.15)';
+        el.style.opacity = '1';
+        setTimeout(() => { el.style.transform = 'scale(1)'; }, 250);
+    }, 200);
+
+    if (!badge) return;
+    const val = typeof aqi === 'number' ? aqi : parseInt(aqi);
+
+    // AQI level colors & labels (Thai)
+    let label, color, bgColor, borderColor;
+    if (isNaN(val)) {
+        label = 'ไม่มีข้อมูล'; color = '#b8a898'; bgColor = 'rgba(184,168,152,0.15)'; borderColor = 'rgba(184,168,152,0.3)';
+    } else if (val <= 50) {
+        label = 'คุณภาพดี'; color = '#7dc87d'; bgColor = 'rgba(125,200,125,0.15)'; borderColor = 'rgba(125,200,125,0.3)';
+        el.style.color = '#7dc87d';
+    } else if (val <= 100) {
+        label = 'ปานกลาง'; color = '#D3CA79'; bgColor = 'rgba(211,202,121,0.15)'; borderColor = 'rgba(211,202,121,0.3)';
+        el.style.color = '#D3CA79';
+    } else if (val <= 150) {
+        label = 'ไม่ดีต่อกลุ่มเสี่ยง'; color = '#EA7300'; bgColor = 'rgba(234,115,0,0.15)'; borderColor = 'rgba(234,115,0,0.3)';
+        el.style.color = '#EA7300';
+    } else if (val <= 200) {
+        label = 'ไม่ดีต่อสุขภาพ'; color = '#E83F25'; bgColor = 'rgba(232,63,37,0.15)'; borderColor = 'rgba(232,63,37,0.3)';
+        el.style.color = '#E83F25';
+    } else {
+        label = 'อันตราย'; color = '#A62C2C'; bgColor = 'rgba(166,44,44,0.15)'; borderColor = 'rgba(166,44,44,0.3)';
+        el.style.color = '#A62C2C';
+    }
+
+    badge.textContent = label;
+    badge.style.color = color;
+    badge.style.background = bgColor;
+    badge.style.borderColor = borderColor;
+    badge.className = 'aqi-badge';
+
+    // Update time if available
+    const timeEl = document.getElementById('aqiTime');
+    if (timeEl && timeStr) {
+        timeEl.textContent = `อัปเดต: ${timeStr}`;
+    } else if (timeEl) {
+        const now = new Date();
+        timeEl.textContent = `อัปเดต: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}`;
+    }
 }
 
 // ============ YEAR PILLS ============
@@ -718,13 +789,20 @@ function initDMYearPills() {
 
 // ============ IMPACTS DETAIL ============
 function showImpactsDetail(d) {
-    const area = document.getElementById('impactsDetailArea');
-    const grid = document.getElementById('impactsDetailGrid');
-    if (!area || !grid) return;
-    if (!d.impactsDetail || d.impactsDetail.length === 0) { area.classList.add('hidden'); return; }
-    area.classList.remove('hidden');
-    document.getElementById('impactsDetailHeading').textContent = `📋 ผลกระทบหลักที่เกิดขึ้นกับ${d.name}`;
-    grid.innerHTML = '';
+    const container = document.getElementById('impactsDetailGrid');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!d.impactsDetail || d.impactsDetail.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = '';
+    // Heading
+    const heading = document.createElement('h3');
+    heading.className = 'impacts-detail-heading anim-fade';
+    heading.textContent = `📋 ผลกระทบหลักที่เกิดขึ้นกับ${d.name}`;
+    container.appendChild(heading);
+    // Grid
+    const grid = document.createElement('div');
+    grid.className = 'impacts-detail-grid';
+    container.appendChild(grid);
     d.impactsDetail.forEach((cat, ci) => {
         const card = document.createElement('div');
         card.className = 'impact-detail-card anim-fade';
@@ -741,5 +819,5 @@ function showImpactsDetail(d) {
     });
     // Trigger animations
     const obs = new IntersectionObserver(e => e.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); }), { threshold: 0.1 });
-    grid.querySelectorAll('.impact-detail-card').forEach(c => obs.observe(c));
+    container.querySelectorAll('.anim-fade').forEach(c => obs.observe(c));
 }

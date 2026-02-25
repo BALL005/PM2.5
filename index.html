@@ -65,10 +65,11 @@
             </h1>
             <p class="hero-tagline anim-fade" style="--d:0.4s">ภัยเงียบที่มองไม่เห็น</p>
             <div class="hero-aqi-pill anim-fade" style="--d:0.6s">
-                <span class="aqi-label">AQI วันนี้</span>
-                <span class="aqi-number" id="aqiNumber">156</span>
-                <span class="aqi-badge danger">ไม่ดีต่อสุขภาพ</span>
+                <span class="aqi-label">AQI พะเยา วันนี้</span>
+                <span class="aqi-number" id="aqiNumber">--</span>
+                <span class="aqi-badge" id="aqiBadge">กำลังโหลด...</span>
             </div>
+            <small class="aqi-time" id="aqiTime"></small>
             <div class="scroll-hint anim-fade" style="--d:1s">
                 <div class="scroll-line"></div>
                 <span>เลื่อนลง</span>
@@ -255,6 +256,7 @@
                     <h3 class="chart-label" id="impactLabel">ผลกระทบ</h3><canvas id="impactChart"></canvas>
                 </div>
                 <div class="disease-grid" id="diseaseGrid"></div>
+                <div class="impacts-detail-area" id="impactsDetailGrid"></div>
             </div>
         </div>
     </section>
