@@ -312,13 +312,68 @@ function initProgressDots() {
 
 // ============ REAL-TIME AQI (IQAir API — Primary) ============
 const IQAIR_KEY = '5214e39e-290c-4407-b83d-17397b3d9648';
-const PHAYAO_LAT = 19.20;
-const PHAYAO_LON = 99.89;
+let aqiLat = 19.1930;
+let aqiLon = 99.8700;
 
 function animateAQI() {
-    fetchPhayaoAQI();
-    // Refresh every 5 minutes (IQAir free plan: 10,000 calls/month ≈ 1 call/5 min)
+    // Try GPS first if "auto" is selected
+    const select = document.getElementById('districtSelect');
+    if (select && select.value === 'auto') {
+        getGPSLocation();
+    } else {
+        fetchPhayaoAQI();
+    }
+    // Refresh every 5 minutes
     setInterval(fetchPhayaoAQI, 5 * 60 * 1000);
+
+    // District select change handler
+    if (select) {
+        select.addEventListener('change', () => {
+            const val = select.value;
+            if (val === 'auto') {
+                getGPSLocation();
+            } else {
+                const [lat, lon] = val.split(',').map(Number);
+                aqiLat = lat;
+                aqiLon = lon;
+                fetchPhayaoAQI();
+            }
+        });
+    }
+
+    // GPS button handler
+    const gpsBtn = document.getElementById('gpsBtn');
+    if (gpsBtn) {
+        gpsBtn.addEventListener('click', () => {
+            const select = document.getElementById('districtSelect');
+            if (select) select.value = 'auto';
+            getGPSLocation();
+        });
+    }
+}
+
+function getGPSLocation() {
+    const gpsBtn = document.getElementById('gpsBtn');
+    if (!navigator.geolocation) {
+        // GPS not supported — fallback to default
+        fetchPhayaoAQI();
+        return;
+    }
+    if (gpsBtn) gpsBtn.classList.add('loading');
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            aqiLat = pos.coords.latitude;
+            aqiLon = pos.coords.longitude;
+            if (gpsBtn) gpsBtn.classList.remove('loading');
+            fetchPhayaoAQI();
+        },
+        (err) => {
+            console.log('GPS error, using default coords:', err.message);
+            if (gpsBtn) gpsBtn.classList.remove('loading');
+            fetchPhayaoAQI();
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
 }
 
 async function fetchPhayaoAQI() {
@@ -328,7 +383,7 @@ async function fetchPhayaoAQI() {
 
     // === Source 1: IQAir (HTTPS — works on GitHub Pages) ===
     try {
-        const url = `https://api.airvisual.com/v2/nearest_city?lat=${PHAYAO_LAT}&lon=${PHAYAO_LON}&key=${IQAIR_KEY}`;
+        const url = `https://api.airvisual.com/v2/nearest_city?lat=${aqiLat}&lon=${aqiLon}&key=${IQAIR_KEY}`;
         const res = await fetch(url);
         const json = await res.json();
         if (json.status === 'success' && json.data) {

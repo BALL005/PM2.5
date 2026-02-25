@@ -69,6 +69,21 @@
                 <span class="aqi-number" id="aqiNumber">--</span>
                 <span class="aqi-badge" id="aqiBadge">กำลังโหลด...</span>
             </div>
+            <div class="aqi-location-picker anim-fade" style="--d:0.7s">
+                <select id="districtSelect" class="district-select">
+                    <option value="auto" selected>📍 ตำแหน่ง GPS อัตโนมัติ</option>
+                    <option value="19.1930,99.8700">อ.เมืองพะเยา</option>
+                    <option value="19.3211,100.0922">อ.จุน</option>
+                    <option value="19.1469,100.1008">อ.เชียงคำ</option>
+                    <option value="19.2272,100.2722">อ.เชียงม่วน</option>
+                    <option value="19.1547,99.7689">อ.ดอกคำใต้</option>
+                    <option value="19.3494,99.8583">อ.ปง</option>
+                    <option value="19.1656,99.9089">อ.แม่ใจ</option>
+                    <option value="19.0389,99.8847">อ.ภูกามยาว</option>
+                    <option value="19.2800,99.7800">อ.ภูซาง</option>
+                </select>
+                <button id="gpsBtn" class="gps-btn" title="ใช้ตำแหน่ง GPS ปัจจุบัน">📍</button>
+            </div>
             <small class="aqi-time" id="aqiTime"></small>
             <div class="scroll-hint anim-fade" style="--d:1s">
                 <div class="scroll-line"></div>
