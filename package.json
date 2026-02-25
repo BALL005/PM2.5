@@ -1,0 +1,13 @@
+{
+  "name": "pm25-website",
+  "version": "1.0.0",
+  "description": "PM2.5 Air Quality Website",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo \"No build step required - static site\" && exit 0",
+    "start": "start index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
