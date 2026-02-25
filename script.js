@@ -322,34 +322,44 @@ async function fetchPhayaoAQI() {
     const badge = document.getElementById('aqiBadge');
     if (!el) return;
 
+    // === Source 1: Air4Thai (กรมควบคุมมลพิษ — official) ===
     try {
-        // WAQI free API — search for Phayao station
+        const res = await fetch('http://air4thai.pcd.go.th/services/getNewAQI_JSON.php');
+        const json = await res.json();
+        if (json.stations) {
+            // Station 70t = สนามกีฬาจังหวัดพะเยา (ต.บ้านต๋อม อ.เมือง, พะเยา)
+            const station = json.stations.find(s => s.stationID === '70t');
+            if (station && station.AQILast && station.AQILast.AQI) {
+                const aqi = parseInt(station.AQILast.AQI.aqi);
+                const pm25val = station.AQILast.PM25 ? parseFloat(station.AQILast.PM25.value) : null;
+                const timeStr = `${station.AQILast.date} ${station.AQILast.time}`;
+                const stationName = station.nameTH || 'สนามกีฬาจังหวัดพะเยา';
+                if (aqi > 0) {
+                    updateAQIDisplay(el, badge, aqi, pm25val, timeStr, stationName, 'Air4Thai (กรมควบคุมมลพิษ)');
+                    return;
+                }
+            }
+        }
+    } catch (e) { console.log('Air4Thai failed, trying WAQI...'); }
+
+    // === Source 2: WAQI (aqicn.org — fallback) ===
+    try {
         const res = await fetch('https://api.waqi.info/feed/phayao/?token=demo');
         const json = await res.json();
         if (json.status === 'ok' && json.data && json.data.aqi) {
             const aqi = json.data.aqi;
             const pm25 = json.data.iaqi && json.data.iaqi.pm25 ? json.data.iaqi.pm25.v : null;
-            updateAQIDisplay(el, badge, aqi, pm25, json.data.time ? json.data.time.s : null);
+            const timeStr = json.data.time ? json.data.time.s : null;
+            updateAQIDisplay(el, badge, aqi, pm25, timeStr, 'Phayao (WAQI)', 'aqicn.org');
             return;
         }
     } catch (e) { /* fallback below */ }
 
-    // Fallback: try search API
-    try {
-        const res2 = await fetch('https://api.waqi.info/search/?keyword=phayao&token=demo');
-        const json2 = await res2.json();
-        if (json2.status === 'ok' && json2.data && json2.data.length > 0) {
-            const aqi = json2.data[0].aqi;
-            updateAQIDisplay(el, badge, aqi, null, null);
-            return;
-        }
-    } catch (e) { /* fallback below */ }
-
-    // Final fallback: show estimated
-    updateAQIDisplay(el, badge, '--', null, null);
+    // === Final fallback ===
+    updateAQIDisplay(el, badge, '--', null, null, '', '');
 }
 
-function updateAQIDisplay(el, badge, aqi, pm25, timeStr) {
+function updateAQIDisplay(el, badge, aqi, pm25, timeStr, stationName, source) {
     // Animate number change
     el.style.transform = 'scale(0.7)';
     el.style.opacity = '0.2';
@@ -363,40 +373,50 @@ function updateAQIDisplay(el, badge, aqi, pm25, timeStr) {
     if (!badge) return;
     const val = typeof aqi === 'number' ? aqi : parseInt(aqi);
 
-    // AQI level colors & labels (Thai)
+    // AQI level colors & labels (เกณฑ์ Air4Thai กรมควบคุมมลพิษ)
     let label, color, bgColor, borderColor;
     if (isNaN(val)) {
         label = 'ไม่มีข้อมูล'; color = '#b8a898'; bgColor = 'rgba(184,168,152,0.15)'; borderColor = 'rgba(184,168,152,0.3)';
-    } else if (val <= 50) {
-        label = 'คุณภาพดี'; color = '#7dc87d'; bgColor = 'rgba(125,200,125,0.15)'; borderColor = 'rgba(125,200,125,0.3)';
+    } else if (val <= 25) {
+        label = 'คุณภาพดีมาก'; color = '#7dc87d'; bgColor = 'rgba(125,200,125,0.15)'; borderColor = 'rgba(125,200,125,0.3)';
         el.style.color = '#7dc87d';
-    } else if (val <= 100) {
-        label = 'ปานกลาง'; color = '#D3CA79'; bgColor = 'rgba(211,202,121,0.15)'; borderColor = 'rgba(211,202,121,0.3)';
+    } else if (val <= 50) {
+        label = 'คุณภาพดี'; color = '#D3CA79'; bgColor = 'rgba(211,202,121,0.15)'; borderColor = 'rgba(211,202,121,0.3)';
         el.style.color = '#D3CA79';
-    } else if (val <= 150) {
-        label = 'ไม่ดีต่อกลุ่มเสี่ยง'; color = '#EA7300'; bgColor = 'rgba(234,115,0,0.15)'; borderColor = 'rgba(234,115,0,0.3)';
+    } else if (val <= 100) {
+        label = 'ปานกลาง'; color = '#EA7300'; bgColor = 'rgba(234,115,0,0.15)'; borderColor = 'rgba(234,115,0,0.3)';
         el.style.color = '#EA7300';
     } else if (val <= 200) {
-        label = 'ไม่ดีต่อสุขภาพ'; color = '#E83F25'; bgColor = 'rgba(232,63,37,0.15)'; borderColor = 'rgba(232,63,37,0.3)';
+        label = 'เริ่มมีผลกระทบต่อสุขภาพ'; color = '#E83F25'; bgColor = 'rgba(232,63,37,0.15)'; borderColor = 'rgba(232,63,37,0.3)';
         el.style.color = '#E83F25';
     } else {
-        label = 'อันตราย'; color = '#A62C2C'; bgColor = 'rgba(166,44,44,0.15)'; borderColor = 'rgba(166,44,44,0.3)';
+        label = 'มีผลกระทบต่อสุขภาพ'; color = '#A62C2C'; bgColor = 'rgba(166,44,44,0.15)'; borderColor = 'rgba(166,44,44,0.3)';
         el.style.color = '#A62C2C';
     }
 
-    badge.textContent = label;
+    // Badge: show label + PM2.5 value
+    if (pm25 && pm25 > 0) {
+        badge.textContent = `${label} | PM2.5: ${pm25} μg/m³`;
+    } else {
+        badge.textContent = label;
+    }
     badge.style.color = color;
     badge.style.background = bgColor;
-    badge.style.borderColor = borderColor;
+    badge.style.border = `1px solid ${borderColor}`;
     badge.className = 'aqi-badge';
 
-    // Update time if available
+    // Update time + station + source
     const timeEl = document.getElementById('aqiTime');
-    if (timeEl && timeStr) {
-        timeEl.textContent = `อัปเดต: ${timeStr}`;
-    } else if (timeEl) {
-        const now = new Date();
-        timeEl.textContent = `อัปเดต: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}`;
+    if (timeEl) {
+        let parts = [];
+        if (timeStr) parts.push(`อัปเดต: ${timeStr}`);
+        if (stationName) parts.push(`สถานี: ${stationName}`);
+        if (source) parts.push(`แหล่ง: ${source}`);
+        if (parts.length === 0) {
+            const now = new Date();
+            parts.push(`อัปเดต: ${now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}`);
+        }
+        timeEl.textContent = parts.join(' | ');
     }
 }
 
