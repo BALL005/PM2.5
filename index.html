@@ -163,7 +163,7 @@
     </section>
 
     <!-- ============ S3: STATS (ย้ายมาก่อน Roles) ============ -->
-    <section class="full-section stats-section" id="stats" data-theme="cream">
+    <section class="full-section stats-section" id="stats" data-theme="dark">
         <div class="section-inner">
             <span class="section-label anim-fade">ข้อมูลย้อนหลัง</span>
             <h2 class="section-heading anim-scale">สถานการณ์ <em>PM 2.5</em> ในประเทศไทย</h2>
@@ -276,6 +276,9 @@
                     <h3 class="chart-label" id="impactLabel">ผลกระทบ</h3><canvas id="impactChart"></canvas>
                 </div>
                 <div class="disease-grid" id="diseaseGrid"></div>
+                <div class="back-to-roles anim-fade" style="--d:0.6s">
+                    <a href="#roles" class="ghost-btn back-roles-btn" id="backToRolesBtn">เลือกอาชีพอื่น</a>
+                </div>
             </div>
         </div>
     </section>
@@ -285,94 +288,25 @@
         <div class="section-inner narrow">
             <!-- คำถามเชื่อมโยง -->
             <span class="section-label anim-fade">คำถามสำคัญ</span>
-            <h2 class="section-heading anim-scale">แล้วมีโรคอะไร<br>ที่เกิดจากฝุ่นแต่<em>ไม่ถูกพูดถึง</em>บ้างไหม?</h2>
+            <h2 class="section-heading anim-scale">โรคอะไร<br>ที่เกิดจากฝุ่นแต่<em>ไม่ถูกพูดถึง</em>บ้าง?</h2>
 
             <div class="text-body anim-fade" style="--d:0.2s">
                 <p>โรคเบาหวานเป็นปัญหาสุขภาพสำคัญที่พบมากและมีแนวโน้มเพิ่มขึ้นต่อเนื่อง
                     สาธารณสุขจังหวัดพะเยามุ่งเน้นการ<strong>คัดกรองประชากรอายุ 35 ปีขึ้นไป</strong></p>
             </div>
 
-            <!-- คำถามเชื่อมโยง PM2.5 กับเบาหวาน -->
-            <h3 class="dm-research-title anim-fade" style="--d:0.22s">ทำไมโรคเบาหวานถึง<em>เกี่ยวข้อง</em>กับฝุ่น?</h3>
-
-            <div class="dm-research-block anim-fade" style="--d:0.24s">
-                <p class="dm-research-intro">การสัมผัสฝุ่นละออง PM 2.5
-                    มีความสัมพันธ์อย่างมีนัยสำคัญต่อการเพิ่มความเสี่ยงของ<strong>โรคเบาหวานชนิดที่ 2</strong>
-                    และส่งผลกระทบต่อระดับน้ำตาลในเลือดของผู้ป่วยเบาหวานที่มีอยู่เดิม
-                    งานวิจัยระบุว่าฝุ่นขนาดจิ๋วนี้สามารถเข้าสู่กระแสเลือดและกระตุ้นกลไกการอักเสบจนนำไปสู่<strong>ภาวะดื้ออินซูลิน</strong>
-                </p>
-            </div>
-
-            <!-- กลไก 4 ข้อ -->
-            <h3 class="dm-mech-heading anim-fade" style="--d:0.25s">กลไกที่ PM 2.5 กระตุ้นโรคเบาหวาน</h3>
-            <div class="dm-mech-grid">
-                <div class="dm-mech-card anim-fade" style="--d:0.28s">
-                    <span class="dmc-icon">01</span>
-                    <h4>กระตุ้นการอักเสบเรื้อรัง</h4>
-                    <p>ฝุ่นเข้าสู่ร่างกายกระตุ้นการอักเสบในระบบต่างๆ ซึ่งเป็นสาเหตุหลักที่ขัดขวางการทำงานของอินซูลิน</p>
-                </div>
-                <div class="dm-mech-card anim-fade" style="--d:0.32s">
-                    <span class="dmc-icon">02</span>
-                    <h4>Oxidative Stress</h4>
-                    <p>ฝุ่นทำให้เกิดอนุมูลอิสระที่ทำลายเซลล์และเนื้อเยื่อ ส่งผลต่อการควบคุมระดับน้ำตาลในเลือด</p>
-                </div>
-                <div class="dm-mech-card anim-fade" style="--d:0.36s">
-                    <span class="dmc-icon">03</span>
-                    <h4>ภาวะดื้ออินซูลิน</h4>
-                    <p>การอักเสบส่งผลให้ร่างกายตอบสนองต่ออินซูลินลดลง ตับอ่อนต้องทำงานหนักขึ้นเพื่อผลิตอินซูลินชดเชย</p>
-                </div>
-                <div class="dm-mech-card anim-fade" style="--d:0.4s">
-                    <span class="dmc-icon">04</span>
-                    <h4>ทำลายตับและตับอ่อน</h4>
-                    <p>การรับฝุ่นระยะยาวทำให้ระดับไขมันในตับสูงขึ้น และอาจทำลายเซลล์เบต้าในตับอ่อนที่ผลิตอินซูลิน</p>
-                </div>
-            </div>
-
-            <!-- ตารางสรุปผลวิจัย -->
-            <div class="dm-research-table-wrap anim-fade" style="--d:0.45s">
-                <h3 class="dm-research-subtitle">สรุปผลกระทบจากงานวิจัย</h3>
-                <div class="dm-research-table-scroll">
-                    <table class="dm-research-table">
-                        <thead>
-                            <tr>
-                                <th>หัวข้อผลกระทบ</th>
-                                <th>รายละเอียดจากงานวิจัย</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>ความเสี่ยงโรคใหม่</strong></td>
-                                <td>ทุกๆ 10 μg/m³ ของ PM 2.5 ที่เพิ่มขึ้นในระยะยาว
-                                    อาจเพิ่มความเสี่ยงต่อโรคเบาหวานชนิดที่ 2 ได้ถึง <strong>25%</strong></td>
-                            </tr>
-                            <tr>
-                                <td><strong>ผลต่อระดับน้ำตาล</strong></td>
-                                <td>การสัมผัสฝุ่นเพียง <strong>28 วัน</strong> สามารถทำให้ค่า HbA1c
-                                    และระดับน้ำตาลขณะอดอาหาร (FPG) สูงขึ้นอย่างมีนัยสำคัญ</td>
-                            </tr>
-                            <tr>
-                                <td><strong>กลุ่มเสี่ยงสูง</strong></td>
-                                <td>ผู้หญิง ผู้สูงอายุ คนอ้วน และผู้ที่มีโรคประจำตัว เช่น ความดันโลหิตสูง
-                                    จะไวต่อผลกระทบของฝุ่นต่อเบาหวานมากกว่าปกติ</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <p class="dm-research-source">แหล่งข้อมูลเพิ่มเติม: โรงพยาบาลกรุงเทพ / วารสารวิจัยและพัฒนาด้านสุขภาพ</p>
-            </div>
-
-            <!-- HDC Data Charts -->
-            <h3 class="hdc-chart-title anim-fade" style="--d:0.5s">สถิติคัดกรองเบาหวาน <em>จังหวัดพะเยา</em></h3>
-            <p class="hdc-subtitle anim-fade" style="--d:0.52s">ข้อมูลจาก HDC กระทรวงสาธารณสุข ปีงบประมาณ 2565-2569</p>
+            <!-- HDC Data Charts (แสดงสถิติก่อนอธิบายความเกี่ยวข้อง) -->
+            <h3 class="hdc-chart-title anim-fade" style="--d:0.25s">สถิติคัดกรองเบาหวาน <em>จังหวัดพะเยา</em></h3>
+            <p class="hdc-subtitle anim-fade" style="--d:0.27s">ข้อมูลจาก HDC กระทรวงสาธารณสุข ปีงบประมาณ 2565-2569</p>
 
             <!-- Chart 1: แนวโน้มร้อยละคัดกรอง 5 ปี -->
-            <div class="chart-box dark-chart anim-fade" style="--d:0.55s">
+            <div class="chart-box dark-chart anim-fade" style="--d:0.3s">
                 <h4 class="chart-label">ร้อยละคัดกรองเบาหวาน ย้อนหลัง 5 ปี</h4>
                 <canvas id="dmTrendChart"></canvas>
             </div>
 
             <!-- Chart 2: จำนวนคัดกรอง แยกกลุ่มอายุ -->
-            <div class="chart-box dark-chart anim-fade" style="--d:0.6s; margin-top: 24px;">
+            <div class="chart-box dark-chart anim-fade" style="--d:0.35s; margin-top: 24px;">
                 <h4 class="chart-label">จำนวนผู้ได้รับการคัดกรอง แยกตามกลุ่มอายุ</h4>
                 <div class="year-pills dm-yr-pills" style="margin-bottom:20px">
                     <button class="yr-pill dm-yr" data-dmyear="2565">2565</button>
@@ -384,14 +318,14 @@
                 <canvas id="dmAgeChart"></canvas>
             </div>
 
-            <!-- Chart 3: ร้อยละ แยกกลุ่มอายุ  -->
-            <div class="chart-box dark-chart anim-fade" style="--d:0.65s; margin-top: 24px;">
+            <!-- Chart 3: ร้อยละ แยกกลุ่มอายุ -->
+            <div class="chart-box dark-chart anim-fade" style="--d:0.4s; margin-top: 24px;">
                 <h4 class="chart-label">ร้อยละการคัดกรอง แยกตามกลุ่มอายุ</h4>
                 <canvas id="dmAgePctChart"></canvas>
             </div>
 
             <!-- ตารางสรุปรายอำเภอ ปี 2569 -->
-            <div class="dm-table-wrap anim-fade" style="--d:0.7s; margin-top: 24px;">
+            <div class="dm-table-wrap anim-fade" style="--d:0.45s; margin-top: 24px;">
                 <h4 class="chart-label">ข้อมูลรายอำเภอ ปี 2569</h4>
                 <div class="dm-table-scroll">
                     <table class="dm-table">
@@ -468,6 +402,77 @@
                     </table>
                 </div>
             </div>
+
+            <!-- คำถามเชื่อมโยง PM2.5 กับเบาหวาน -->
+            <h3 class="dm-research-title anim-fade" style="--d:0.5s">ทำไมโรคเบาหวานถึง<em>เกี่ยวข้อง</em>กับฝุ่น?</h3>
+
+            <div class="dm-research-block anim-fade" style="--d:0.24s">
+                <p class="dm-research-intro">การสัมผัสฝุ่นละออง PM 2.5
+                    มีความสัมพันธ์อย่างมีนัยสำคัญต่อการเพิ่มความเสี่ยงของ<strong>โรคเบาหวานชนิดที่ 2</strong>
+                    และส่งผลกระทบต่อระดับน้ำตาลในเลือดของผู้ป่วยเบาหวานที่มีอยู่เดิม
+                    งานวิจัยระบุว่าฝุ่นขนาดจิ๋วนี้สามารถเข้าสู่กระแสเลือดและกระตุ้นกลไกการอักเสบจนนำไปสู่<strong>ภาวะดื้ออินซูลิน</strong>
+                </p>
+            </div>
+
+            <!-- กลไก 4 ข้อ -->
+            <h3 class="dm-mech-heading anim-fade" style="--d:0.25s">กลไกที่ PM 2.5 กระตุ้นโรคเบาหวาน</h3>
+            <div class="dm-mech-grid">
+                <div class="dm-mech-card anim-fade" style="--d:0.28s">
+                    <span class="dmc-icon">01</span>
+                    <h4>กระตุ้นการอักเสบเรื้อรัง</h4>
+                    <p>ฝุ่นเข้าสู่ร่างกายกระตุ้นการอักเสบในระบบต่างๆ ซึ่งเป็นสาเหตุหลักที่ขัดขวางการทำงานของอินซูลิน</p>
+                </div>
+                <div class="dm-mech-card anim-fade" style="--d:0.32s">
+                    <span class="dmc-icon">02</span>
+                    <h4>Oxidative Stress</h4>
+                    <p>ฝุ่นทำให้เกิดอนุมูลอิสระที่ทำลายเซลล์และเนื้อเยื่อ ส่งผลต่อการควบคุมระดับน้ำตาลในเลือด</p>
+                </div>
+                <div class="dm-mech-card anim-fade" style="--d:0.36s">
+                    <span class="dmc-icon">03</span>
+                    <h4>ภาวะดื้ออินซูลิน</h4>
+                    <p>การอักเสบส่งผลให้ร่างกายตอบสนองต่ออินซูลินลดลง ตับอ่อนต้องทำงานหนักขึ้นเพื่อผลิตอินซูลินชดเชย</p>
+                </div>
+                <div class="dm-mech-card anim-fade" style="--d:0.4s">
+                    <span class="dmc-icon">04</span>
+                    <h4>ทำลายตับและตับอ่อน</h4>
+                    <p>การรับฝุ่นระยะยาวทำให้ระดับไขมันในตับสูงขึ้น และอาจทำลายเซลล์เบต้าในตับอ่อนที่ผลิตอินซูลิน</p>
+                </div>
+            </div>
+
+            <!-- ตารางสรุปผลวิจัย -->
+            <div class="dm-research-table-wrap anim-fade" style="--d:0.45s">
+                <h3 class="dm-research-subtitle">สรุปผลกระทบจากงานวิจัย</h3>
+                <div class="dm-research-table-scroll">
+                    <table class="dm-research-table">
+                        <thead>
+                            <tr>
+                                <th>หัวข้อผลกระทบ</th>
+                                <th>รายละเอียดจากงานวิจัย</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ความเสี่ยงโรคใหม่</strong></td>
+                                <td>ทุกๆ 10 μg/m³ ของ PM 2.5 ที่เพิ่มขึ้นในระยะยาว
+                                    อาจเพิ่มความเสี่ยงต่อโรคเบาหวานชนิดที่ 2 ได้ถึง <strong>25%</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>ผลต่อระดับน้ำตาล</strong></td>
+                                <td>การสัมผัสฝุ่นเพียง <strong>28 วัน</strong> สามารถทำให้ค่า HbA1c
+                                    และระดับน้ำตาลขณะอดอาหาร (FPG) สูงขึ้นอย่างมีนัยสำคัญ</td>
+                            </tr>
+                            <tr>
+                                <td><strong>กลุ่มเสี่ยงสูง</strong></td>
+                                <td>ผู้หญิง ผู้สูงอายุ คนอ้วน และผู้ที่มีโรคประจำตัว เช่น ความดันโลหิตสูง
+                                    จะไวต่อผลกระทบของฝุ่นต่อเบาหวานมากกว่าปกติ</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="dm-research-source">แหล่งข้อมูลเพิ่มเติม: โรงพยาบาลกรุงเทพ / วารสารวิจัยและพัฒนาด้านสุขภาพ</p>
+            </div>
+
+
 
             <small class="source-line anim-fade" style="--d:0.75s">แหล่งข้อมูล: HDC กระทรวงสาธารณสุข /
                 สำนักงานสาธารณสุขจังหวัดพะเยา 2565-2569</small>

@@ -1585,6 +1585,18 @@ button {
     font-size: 0.75rem;
 }
 
+/* Back to roles button */
+.back-to-roles {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.back-roles-btn {
+    font-size: 0.88rem;
+    padding: 12px 32px;
+}
+
 /* ===== PREVENTION ===== */
 .tips-group-title {
     font-family: var(--font-heading);

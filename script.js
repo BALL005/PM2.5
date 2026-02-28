@@ -531,9 +531,27 @@ function initRoleCards() {
             btn.classList.add('selected');
             currentRole = btn.dataset.role;
             showDashboard(currentRole);
-            setTimeout(() => document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' }), 400);
+            setTimeout(() => {
+                const target = document.getElementById('dashboard');
+                if (target) {
+                    const y = target.getBoundingClientRect().top + window.pageYOffset - 20;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+            }, 300);
         });
     });
+    // Back to roles button
+    const backBtn = document.getElementById('backToRolesBtn');
+    if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById('roles');
+            if (target) {
+                const y = target.getBoundingClientRect().top + window.pageYOffset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        });
+    }
 }
 
 // ============ DASHBOARD ============
